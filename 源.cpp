@@ -31,8 +31,10 @@ using namespace std;
 //}
 class Complex {
 public:
+	Complex *pc = this;
 	double real;
 	double image;
+	
 public:
 	Complex()
 	{
@@ -43,25 +45,52 @@ public:
 	{
 		this->real = t_real;
 		this->image = t_image;
+		pc = this;
 	}
 	void display()
 	{
 		cout << "real=" << this->real << ";image=" << this->image << endl;
 	}
-	friend Complex operator+(Complex A, Complex B) {
-		return Complex(A.real + B.real, A.image + B.image);
+	Complex operator+(Complex B) {
+		return Complex(this->real + B.real, this->image);
+	}
+	Complex operator-(Complex B) {
+		return Complex(this->real - B.real, this->image);
+	}
+
+	Complex operator--() {
+		return Complex(--this->real , this->image);
+	}
+	Complex operator--(int) {
+		return Complex(this->real--, this->image);
+	}
+	Complex operator ++ ();
+	Complex operator = (Complex B);
+	//friend Complex operator+(Complex A, Complex B) {
+		/*return Complex(A.real + B.real, A.image + B.image);
 	}
 	friend Complex operator-(Complex A, Complex B) {
 		return Complex(B.real - A.real, B.image - A.image);
+	}*/
+	Complex *operator->()
+	{
+		if (pc != NULL) {
+			return pc;
+		}
+		static Complex s_complex;
+		return &s_complex;
 	}
-	friend Complex operator--(Complex &A) {
-		return Complex(-- A.real, A.image);
-	}
-	friend Complex operator--(Complex& A, int) {
-		return Complex(A.real--, A.image);
-	}
-		
 };
+Complex Complex::operator ++() {
+	return Complex(++real, image);
+}
+Complex Complex::operator =(Complex B)	      
+{
+    real = B.real, image = B.image;
+	cout << "operator = calling..." << endl;
+	return *this;                                                        
+}
+
 int main()
 {
 	Complex comp1;
@@ -78,5 +107,13 @@ int main()
 	comp5.display();
 	Complex comp6 = comp2--;
 	comp6.display();
+	Complex comp7 = ++comp2;
+	comp7.display();
+	Complex comp8 = comp2;
+	comp8.display();
+	comp1.pc->display();
+	//delete comp1.pc;
+	comp1.pc = NULL;
+	comp1->display();
 	system("pause");
 }
